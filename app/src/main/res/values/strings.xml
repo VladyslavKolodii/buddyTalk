@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">TalkerBuddy</string>
-    <string name="facebook_app_id">923646864827183</string>
+    <!--<string name="facebook_app_id">923646864827183</string>-->
+    <string name="facebook_app_id">336146837451745</string>
+    <string name="fb_login_protocol_scheme">fb336146837451745</string>
     <string name="in_app_product_id">call_minute_credits</string>
     <string name="in_app_billing_lisence_key">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtTEbYSBPJODr6rhhCz1zNCPy/zTnjfwihTERi97Q29MZh9fbKPhU3oLBFKstonFAmmTdUh+15oyaS/UWOzuXTE0LLdcbMJU3SnLD6Nt9w04MO/84mGGqmXHR+q92QFHHCi2lBIAd8Y847fFdEqXf8eOCC+UvqXDMxryUbG350EN82rkcCb8v5XD4WRsPuzAzMUjc95xVoBpLF3NfHe+rUjFlsYbm60nhCsijo/1aMjFEN49KDwPfekyVQR757+iCw0mRurucg+shqxuVMhx9x6kNJBxKZcAOwtJZeaP7N2Y2s/JBGTPwWcSAz5ePP6E2UgUOS+C+FF1GcVPsczhN7wIDAQAB</string>
     <string name="no_online_peers_title">No Online Peers</string>
