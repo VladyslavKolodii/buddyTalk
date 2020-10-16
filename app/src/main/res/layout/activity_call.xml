@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/call_activity"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/call_screen_background_drawable">
+
+        <ImageView
+            android:id="@+id/my_profile_pic"
+            android:layout_width="58.0dip"
+            android:layout_height="58.0dip"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="150.0dip"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/connection_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10.0dip"
+            android:text="Searching Buddies..."
+            android:textColor="#ffffffff"
+            android:textSize="16.0dip"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/my_profile_pic" />
+
+        <LinearLayout
+            android:id="@+id/search_ll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10.0dip"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/connection_status">
+
+            <ImageView
+                android:id="@+id/searching_rotation_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:src="@drawable/search_animation_icon" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/peer_deatils_view_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/connecting_call_foreground_drawable"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/search_ll"
+            app:layout_constraintEnd_toEndOf="@+id/search_ll"
+            app:layout_constraintStart_toStartOf="@+id/search_ll"
+            app:layout_constraintTop_toTopOf="@+id/search_ll">
+
+            <ImageView
+                android:id="@+id/peer_profile_pic"
+                android:layout_width="58.0dip"
+                android:layout_height="58.0dip" />
+
+            <TextView
+                android:id="@+id/peer_name_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5.0dip"
+                android:text="Mummy"
+                android:textColor="#ffffffff"
+                android:textSize="16.0dip" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/call_minutes_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20.0dip"
+            android:text="On Call 00:00"
+            android:textAllCaps="false"
+            android:textColor="#ffffffff"
+            android:textSize="20.0dip"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_ll" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="25.0dip"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="4.0dip"
+                android:layout_marginLeft="28.0dip"
+                android:layout_marginRight="28.0dip"
+                android:layout_marginBottom="15.0dip"
+                android:background="#ffffffff" />
+
+            <Button
+                android:id="@+id/stop_search_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/stop_searching_button_backgroung"
+                android:text="Stop"
+                android:textAllCaps="false"
+                android:textColor="@color/text_color"
+                android:textSize="18.0dip" />
+
+            <LinearLayout
+                android:id="@+id/video_call_utility_buttons"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="35.0dip"
+                android:paddingRight="35.0dip"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="0.0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1.0"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/speaker_background"
+                        android:layout_width="50.0dip"
+                        android:layout_height="50.0dip"
+                        android:layout_gravity="center"
+                        android:background="@drawable/unclicked_button_background"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <Button
+                            android:id="@+id/speaker_button"
+                            android:layout_width="30.0dip"
+                            android:layout_height="30.0dip"
+                            android:background="@android:color/transparent"
+                            android:foreground="@drawable/speaker_is_off_icon" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0.0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1.0"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/mic_background"
+                        android:layout_width="50.0dip"
+                        android:layout_height="50.0dip"
+                        android:layout_gravity="center"
+                        android:background="@drawable/unclicked_button_background"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <Button
+                            android:id="@+id/mic_button"
+                            android:layout_width="30.0dip"
+                            android:layout_height="30.0dip"
+                            android:background="@android:color/transparent"
+                            android:foreground="@drawable/mic_is_on_icon" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0.0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1.0"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/end_call_background"
+                        android:layout_width="50.0dip"
+                        android:layout_height="50.0dip"
+                        android:layout_gravity="center"
+                        android:background="@drawable/btn_endcall"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <Button
+                            android:id="@+id/end_call"
+                            android:layout_width="30.0dip"
+                            android:layout_height="30.0dip"
+                            android:background="@android:color/transparent"
+                            android:foreground="@drawable/call_end_btn_vector" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+
+</FrameLayout>

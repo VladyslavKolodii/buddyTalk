@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="175.0dip"
+    android:height="175.0dip"
+    android:viewportWidth="175.0"
+    android:viewportHeight="175.0">
+    <path
+        android:fillColor="#ffa676a1"
+        android:fillType="evenOdd"
+        android:pathData="M88.496,150.008C53.374,150.008 24.985,121.618 24.985,86.496C24.985,51.374 53.374,22.985 88.496,22.985C123.618,22.985 152.007,51.374 152.007,86.496C152.007,121.618 123.618,150.008 88.496,150.008Z" />
+    <path
+        android:fillAlpha="0.35"
+        android:fillColor="#ffffffff"
+        android:fillType="evenOdd"
+        android:pathData="M87.5,170C40.218,170 2,132.452 2,86C2,39.548 40.218,2 87.5,2C134.781,2 173,39.548 173,86C173,132.452 134.781,170 87.5,170Z"
+        android:strokeAlpha="0.35" />
+    <path
+        android:fillAlpha="0.65"
+        android:fillColor="@color/search_animation_icon__0"
+        android:fillType="evenOdd"
+        android:pathData="M88.269,85.52V85.519H2.926C2.926,79.805 3.51,74.095 4.66,68.55C5.781,63.146 7.453,57.828 9.633,52.744C11.77,47.758 14.417,42.946 17.501,38.441C20.554,33.982 24.06,29.79 27.922,25.98C31.782,22.172 36.032,18.712 40.553,15.699C45.114,12.658 49.991,10.046 55.049,7.936C60.197,5.787 65.587,4.136 71.07,3.029C76.693,1.894 82.479,1.318 88.269,1.318V85.519V85.52Z"
+        android:strokeAlpha="0.65" />
+    <path
+        android:fillAlpha="0.004"
+        android:fillColor="#ff000000"
+        android:fillType="evenOdd"
+        android:pathData="M87.895,1.59V170.058V1.59Z"
+        android:strokeWidth="1.0"
+        android:strokeAlpha="0.4"
+        android:strokeColor="#ffffffff" />
+    <path
+        android:fillAlpha="0.004"
+        android:fillColor="#ff000000"
+        android:fillType="evenOdd"
+        android:pathData="M173.271,85.824H2.519H173.271Z"
+        android:strokeWidth="1.0"
+        android:strokeAlpha="0.4"
+        android:strokeColor="#ffffffff" />
+</vector>

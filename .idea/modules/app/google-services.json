@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "821919425097",
+    "firebase_url": "https://buddytalk-4de7e.firebaseio.com",
+    "project_id": "buddytalk-4de7e",
+    "storage_bucket": "buddytalk-4de7e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:821919425097:android:9c7d82f5c52c963c0d9598",
+        "android_client_info": {
+          "package_name": "com.staleinit.buddytalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "821919425097-epgnvuketpc771ir7umrfscbrei51fou.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.staleinit.buddytalk",
+            "certificate_hash": "36be50e5eea4c9e4509fdfa515a3d66a841d5f46"
+          }
+        },
+        {
+          "client_id": "821919425097-hcl0l2lb7l3v18d4i2pjeu42c5erhp21.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiw9hcQsBAcq6SkPx_BDRIdf-T4z5Z9kM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "821919425097-hcl0l2lb7l3v18d4i2pjeu42c5erhp21.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

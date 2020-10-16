@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">TalkerBuddy</string>
+    <string name="facebook_app_id">923646864827183</string>
+    <string name="in_app_product_id">call_minute_credits</string>
+    <string name="in_app_billing_lisence_key">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtTEbYSBPJODr6rhhCz1zNCPy/zTnjfwihTERi97Q29MZh9fbKPhU3oLBFKstonFAmmTdUh+15oyaS/UWOzuXTE0LLdcbMJU3SnLD6Nt9w04MO/84mGGqmXHR+q92QFHHCi2lBIAd8Y847fFdEqXf8eOCC+UvqXDMxryUbG350EN82rkcCb8v5XD4WRsPuzAzMUjc95xVoBpLF3NfHe+rUjFlsYbm60nhCsijo/1aMjFEN49KDwPfekyVQR757+iCw0mRurucg+shqxuVMhx9x6kNJBxKZcAOwtJZeaP7N2Y2s/JBGTPwWcSAz5ePP6E2UgUOS+C+FF1GcVPsczhN7wIDAQAB</string>
+    <string name="no_online_peers_title">No Online Peers</string>
+    <string name="no_internet_title">No Internet Connection</string>
+    <string name="no_internet_message">Please make sure you have active internet connection</string>
+<!--    <string name="default_web_client_id">425324289844-ebcg31hu11le2ditbmj7nuh1cndiu4h7.apps.googleusercontent.com</string>-->
+    <string name="facebook_email">email</string>
+    <string name="fresh_coins">300</string>
+    <string name="no_coins_title">Low Credits</string>
+    <string name="no_coins_message">You don\'t have enough credits. Please buy or earn credits to make further calls.</string>
+    <string name="mic_permission_title">Mic Permission</string>
+    <string name="mic_permission_message">Allow Talker Buddy to Record your Audio and send it to your peer in a on going call.</string>
+    <string name="minimum_coins_threshold">10</string>
+    <string name="users_database">Users_Database</string>
+    <string name="billing_seconds">6</string>
+    <string name="billing_coins">1</string>
+    <string name="online_trasaction_number">Online_Transaction_Number</string>
+    <string name="turnservers">[{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:443?transport=tcp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:80?transport=tcp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:443?transport=udp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:80?transport=udp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:3478?transport=tcp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:3478?transport=udp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:5349?transport=tcp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:5349?transport=udp\",\"username\":\"stalein\"}]</string>
+</resources>

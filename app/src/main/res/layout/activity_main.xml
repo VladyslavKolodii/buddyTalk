@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:id="@+id/profile_ll"
+        android:layout_width="344.0dip"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5.0dip"
+        android:background="@drawable/profile_background_drawable"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/profile_pic"
+            android:layout_width="58.0dip"
+            android:layout_height="58.0dip"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="20.0dip" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="7.0dip"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Display Name"
+                android:textColor="#ffffffff"
+                android:textSize="20.0dip" />
+
+            <TextView
+                android:id="@+id/email_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="someone@gmail.com"
+                android:textColor="#ffffffff"
+                android:textSize="14.0dip" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/credit_mainactivity_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:layout_marginStart="10.0dip"
+            android:text="350c"
+            android:textColor="#ffffffff"
+            android:textSize="16.0dip" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/credit_balance_ll"
+        android:layout_width="280.0dip"
+        android:layout_height="55.0dip"
+        android:layout_marginTop="15.0dip"
+        android:gravity="left"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_ll">
+
+        <ImageView
+            android:id="@+id/my_gender_image_view"
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="4.0dip"
+            android:src="@drawable/male_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="18.0dip"
+            android:text="My Gender"
+            android:textColor="@color/text_color"
+            android:textSize="16.0dip"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/my_gender_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:layout_marginStart="70.0dip"
+            android:text="MALE"
+            android:textColor="@color/text_color"
+            android:textSize="16.0dip" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/notification_ll"
+        android:layout_width="280.0dip"
+        android:layout_height="55.0dip"
+        android:layout_marginTop="5.0dip"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/credit_balance_ll">
+
+        <ImageView
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/notification_bell_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="18.0dip"
+            android:text="Notification"
+            android:textColor="@color/text_color"
+            android:textSize="16.0dip"
+            android:textStyle="bold" />
+
+        <Switch
+            android:id="@+id/notification_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="70.0dip" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/about_app_ll"
+        android:layout_width="280.0dip"
+        android:layout_height="55.0dip"
+        android:layout_marginStart="12.0dip"
+        android:layout_marginTop="5.0dip"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notification_ll">
+
+        <ImageView
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/female_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="18.0dip"
+            android:text="Help and Feedback"
+            android:textColor="@color/text_color"
+            android:textSize="16.0dip"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buy_credit_ll_button"
+        android:layout_width="280.0dip"
+        android:layout_height="55.0dip"
+        android:layout_marginStart="12.0dip"
+        android:layout_marginTop="5.0dip"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/about_app_ll">
+
+        <ImageView
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/buy_credt_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="18.0dip"
+            android:text="Buy Coins"
+            android:textColor="@color/text_color"
+            android:textSize="16.0dip"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/choose_partner_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/choose_partner_text_view_background"
+        android:gravity="center"
+        android:text="Choose Your Interest Partner"
+        android:textColor="#ffffffff"
+        android:textSize="14.0dip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buy_credit_ll_button" />
+
+    <LinearLayout
+        android:id="@+id/male_button_layout"
+        android:layout_width="270.0dip"
+        android:layout_height="50.0dip"
+        android:layout_marginTop="5.0dip"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_partner_textview">
+
+        <ImageView
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="15.0dip"
+            android:background="@drawable/male_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="18.0dip"
+            android:text="Male"
+            android:textColor="@color/text_color"
+            android:textSize="16.0dip"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/female_button_layout"
+        android:layout_width="270.0dip"
+        android:layout_height="50.0dip"
+        android:layout_marginTop="5.0dip"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/male_button_layout">
+
+        <ImageView
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="15.0dip"
+            android:background="@drawable/female_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="18.0dip"
+            android:text="Female"
+            android:textColor="@color/text_color"
+            android:textSize="16.0dip"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/both_button_layout"
+        android:layout_width="270.0dip"
+        android:layout_height="50.0dip"
+        android:layout_marginTop="5.0dip"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/female_button_layout">
+
+        <ImageView
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="15.0dip"
+            android:background="@drawable/both_male_female_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="18.0dip"
+            android:text="Both"
+            android:textColor="@color/text_color"
+            android:textSize="16.0dip"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/start_call_button"
+        android:layout_width="200.0dip"
+        android:layout_height="wrap_content"
+        android:background="@drawable/start_call_button_background"
+        android:text="Start Call"
+        android:textColor="#ffffffff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/both_button_layout" />
+</androidx.constraintlayout.widget.ConstraintLayout>
