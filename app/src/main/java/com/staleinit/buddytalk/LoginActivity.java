@@ -170,8 +170,10 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         hideProgressLayout();
         if (user != null) {
+
             User user1 = new User(user.getUid(), user.getDisplayName(),
-                    user.getEmail(), getGender(), true);
+                    user.getEmail(), getGender(), true, user.getPhotoUrl() != null ?
+                    user.getPhotoUrl().toString() : "");
             mDatabase.child("users").child(user1.userId).setValue(user1);
             userManager.saveUser(user1);
             updateUI(user1);

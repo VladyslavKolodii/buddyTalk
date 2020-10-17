@@ -17,6 +17,7 @@ import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.staleinit.buddytalk.model.User;
 
 public class MainActivity extends AppCompatActivity {
@@ -46,11 +47,25 @@ public class MainActivity extends AppCompatActivity {
         startCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setUserAvailability(false);
                 CallActivity.dialACall(MainActivity.this);
             }
         });
         setUpUserInfo();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUserAvailability(true);
+    }
+
+    private void setUserAvailability(boolean isAvailable) {
+        if (mUser != null) {
+            FirebaseDatabase.getInstance().getReference().child("users").child(mUser.userId)
+                    .child("isAvailable").setValue(isAvailable);
+        }
     }
 
     private void setUpUserInfo() {
@@ -62,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             nameTV.setText(mUser.username);
             emailTV.setText(mUser.email);
             genderTV.setText(mUser.gender.toString());
+            setUserAvailability(true);
         }
     }
 

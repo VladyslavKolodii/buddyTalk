@@ -30,6 +30,8 @@
     <string name="channel_description">Common notification channel</string>
     <string name="google_signin_in_progress">Google signing in progress</string>
     <string name="msg_setting_up_the_account">Setting up the account</string>
+    <string name="calling_buddy">Calling Buddy</string>
+    <string name="no_buddy_found">No buddy found</string>
     <string-array name="gender_entries">
         <item>Male</item>
         <item>Female</item>

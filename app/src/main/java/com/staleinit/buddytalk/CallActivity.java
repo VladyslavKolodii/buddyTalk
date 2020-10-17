@@ -5,13 +5,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.AnimatedVectorDrawable;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,7 +22,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
+import com.google.common.collect.Iterables;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.staleinit.buddytalk.model.User;
 
 import java.util.Locale;
 
@@ -35,6 +44,12 @@ public class CallActivity extends AppCompatActivity {
     private RtcEngine mRtcEngine; // Tutorial Step 1
     private DatabaseReference mFirebaseDbReference;
     private ImageView searchAnimationView;
+    AnimatedVectorDrawable animationDrawable;
+    private Button stopSearchButton;
+    private User buddyUser;
+    private ImageView ivBuddyProfilePic;
+    private TextView tvBuddyName;
+    private TextView tvConnectionStatus;
 
     private final IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() { // Tutorial Step 1
 
@@ -95,12 +110,66 @@ public class CallActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call);
+        mFirebaseDbReference = FirebaseDatabase.getInstance().getReference();
         searchAnimationView = findViewById(R.id.searching_rotation_view);
-        AnimatedVectorDrawable animationDrawable = (AnimatedVectorDrawable) searchAnimationView.getDrawable();
+        animationDrawable = (AnimatedVectorDrawable) searchAnimationView.getDrawable();
+        tvBuddyName = findViewById(R.id.peer_name_textview);
+        ivBuddyProfilePic = findViewById(R.id.peer_profile_pic);
+        tvConnectionStatus = findViewById(R.id.connection_status);
         animationDrawable.start();
+        stopSearchButton = findViewById(R.id.stop_search_button);
+        stopSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animationDrawable.stop();
+                finish();
+            }
+        });
+        searchBuddy();
+    }
+
+    private void searchBuddy() {
+        Query query = mFirebaseDbReference.child("users").orderByChild("isAvailable").equalTo(true);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    DataSnapshot[] availableUsers = Iterables.
+                            toArray(snapshot.getChildren(), DataSnapshot.class);
+                    if (availableUsers.length > 0) {
+                        int randomIndex = (int) (Math.random() % availableUsers.length);
+                        buddyUser = availableUsers[randomIndex].getValue(User.class);
+                        connectCallWithBuddy(buddyUser);
+                    } else {
+                        tvBuddyName.setText(R.string.no_buddy_found);
+                        animationDrawable.stop();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private void connectCallWithBuddy(User buddyUser) {
+        setUserAvailability(false);
+        tvConnectionStatus.setText(R.string.calling_buddy);
+        tvBuddyName.setText(buddyUser.username);
+        Glide.with(this).load(buddyUser.profilePic).into(ivBuddyProfilePic);
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
             initAgoraEngineAndJoinChannel();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        setUserAvailability(true);
+        super.onDestroy();
     }
 
     public boolean checkSelfPermission(String permission, int requestCode) {
@@ -135,6 +204,13 @@ public class CallActivity extends AppCompatActivity {
         }
     }
 
+    private void setUserAvailability(boolean isAvailable) {
+        if (buddyUser != null) {
+            FirebaseDatabase.getInstance().getReference().child("users").child(buddyUser.userId)
+                    .child("isAvailable").setValue(isAvailable);
+        }
+    }
+
     private void initAgoraEngineAndJoinChannel() {
         initializeAgoraEngine();     // Tutorial Step 1
         joinChannel();               // Tutorial Step 2
@@ -150,6 +226,7 @@ public class CallActivity extends AppCompatActivity {
             throw new RuntimeException("NEED TO check rtc sdk init fatal error\n" + Log.getStackTraceString(e));
         }
     }
+
     // Tutorial Step 2
     private void joinChannel() {
         String accessToken = getString(R.string.agora_access_token);

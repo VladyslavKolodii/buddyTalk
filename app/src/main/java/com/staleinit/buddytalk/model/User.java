@@ -1,5 +1,6 @@
 package com.staleinit.buddytalk.model;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,17 +14,20 @@ public class User implements Parcelable {
     public String email;
     public Gender gender;
     public boolean isAvailable;
+    public String profilePic;
 
     public User() {
 
     }
 
-    public User(String userId, String username, String email, Gender gender, boolean isAvailable) {
+    public User(String userId, String username, String email, Gender gender, boolean isAvailable,
+                String profilePic) {
         this.userId = userId;
         this.username = username;
         this.email = email;
         this.gender = gender;
         this.isAvailable = isAvailable;
+        this.profilePic = profilePic;
     }
 
     protected User(Parcel in) {
@@ -32,6 +36,7 @@ public class User implements Parcelable {
         email = in.readString();
         gender = Gender.values()[in.readInt()];
         isAvailable = in.readByte() != 0;
+        profilePic = in.readString();
     }
 
     @Override
@@ -41,6 +46,7 @@ public class User implements Parcelable {
         dest.writeString(email);
         dest.writeInt(gender.ordinal());
         dest.writeByte((byte) (isAvailable ? 1 : 0));
+        dest.writeString(profilePic);
     }
 
     @Override
