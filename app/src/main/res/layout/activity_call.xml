@@ -48,7 +48,7 @@
                 android:id="@+id/searching_rotation_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:src="@drawable/search_animation_icon" />
+                android:src="@drawable/search_animation_vector_drawable" />
         </LinearLayout>
 
         <LinearLayout

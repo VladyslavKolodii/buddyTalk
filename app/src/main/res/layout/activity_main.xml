@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:id="@+id/profile_ll"
@@ -34,7 +34,7 @@
                 android:id="@+id/name_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Display Name"
+                tools:text="Display Name"
                 android:textColor="#ffffffff"
                 android:textSize="20.0dip" />
 
@@ -42,7 +42,7 @@
                 android:id="@+id/email_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="someone@gmail.com"
+                tools:text="someone@gmail.com"
                 android:textColor="#ffffffff"
                 android:textSize="14.0dip" />
         </LinearLayout>
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|right"
             android:layout_marginStart="70.0dip"
-            android:text="MALE"
+            tools:text="MALE"
             android:textColor="@color/text_color"
             android:textSize="16.0dip" />
     </LinearLayout>

@@ -8,7 +8,7 @@
     <string name="no_online_peers_title">No Online Peers</string>
     <string name="no_internet_title">No Internet Connection</string>
     <string name="no_internet_message">Please make sure you have active internet connection</string>
-<!--    <string name="default_web_client_id">425324289844-ebcg31hu11le2ditbmj7nuh1cndiu4h7.apps.googleusercontent.com</string>-->
+    <!--    <string name="default_web_client_id">425324289844-ebcg31hu11le2ditbmj7nuh1cndiu4h7.apps.googleusercontent.com</string>-->
     <string name="facebook_email">email</string>
     <string name="fresh_coins">300</string>
     <string name="no_coins_title">Low Credits</string>
@@ -21,4 +21,17 @@
     <string name="billing_coins">1</string>
     <string name="online_trasaction_number">Online_Transaction_Number</string>
     <string name="turnservers">[{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:443?transport=tcp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:80?transport=tcp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:443?transport=udp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:80?transport=udp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:3478?transport=tcp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:3478?transport=udp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:5349?transport=tcp\",\"username\":\"stalein\"},{\"credential\":\"abcd\",\"url\":\"turn:buddyserver.stalenit.com:5349?transport=udp\",\"username\":\"stalein\"}]</string>
+
+
+    <!-- Agora.io Settings -->
+    <string name="agora_app_id">a1ffa8d8bc4d4066a6a6445a5a02f274</string>
+    <string name="agora_access_token">006a1ffa8d8bc4d4066a6a6445a5a02f274IAAxsjX6zcIQGHdKMV22DRI0f+yaPp6T/+lB6KBkMNv4PKHYMoUAAAAAEABEZ8flLsKKXwEAAQAtwopf</string>
+    <string name="channel_name">Buddy_Talk</string>
+    <string name="channel_description">Common notification channel</string>
+    <string name="google_signin_in_progress">Google signing in progress</string>
+    <string name="msg_setting_up_the_account">Setting up the account</string>
+    <string-array name="gender_entries">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
 </resources>

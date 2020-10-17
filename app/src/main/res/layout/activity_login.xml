@@ -37,52 +37,83 @@
             android:textSize="20.0dip"
             android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="vertical">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30.0dip"
-                android:orientation="horizontal">
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Gender:"
-                    android:textColor="@color/text_color"
-                    android:textSize="18.0dip" />
+                    android:layout_marginTop="30.0dip"
+                    android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/mygenderspinner"
-                    android:layout_width="140.0dip"
-                    android:layout_height="wrap_content"
-                    android:spinnerMode="dropdown"
-                    android:textAllCaps="false"
-                    android:textColor="#ff000000" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gender:"
+                        android:textColor="@color/text_color"
+                        android:textSize="18.0dip" />
+
+                    <Spinner
+                        android:id="@+id/mygenderspinner"
+                        android:layout_width="140.0dip"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/gender_entries"
+                        android:spinnerMode="dropdown"
+                        android:textAllCaps="false"
+                        android:textColor="#ff000000" />
+                </LinearLayout>
+
+                <com.google.android.gms.common.SignInButton
+                    android:id="@+id/google_sign_in_button"
+                    android:layout_width="250.0dip"
+                    android:layout_height="35.0dip"
+                    android:layout_marginTop="30.0dip"
+                    android:textAlignment="center" />
+
+                <com.facebook.login.widget.LoginButton
+                    android:id="@+id/fb_login_button"
+                    android:layout_width="250.0dip"
+                    android:layout_height="35.0dip"
+                    android:layout_marginTop="30.0dip"
+                    android:layout_marginBottom="30.0dip"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/google_sign_in_button" />
+
             </LinearLayout>
 
-            <com.google.android.gms.common.SignInButton
-                android:id="@+id/google_sign_in_button"
-                android:layout_width="250.0dip"
-                android:layout_height="35.0dip"
-                android:layout_marginTop="30.0dip"
-                android:textAlignment="center" />
+            <LinearLayout
+                android:id="@+id/progress_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black_transparent"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
-            <com.facebook.login.widget.LoginButton
-                android:id="@+id/fb_login_button"
-                android:layout_width="250.0dip"
-                android:layout_height="35.0dip"
-                android:layout_marginTop="30.0dip"
-                android:layout_marginBottom="30.0dip"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/google_sign_in_button" />
-        </LinearLayout>
+                <ProgressBar
+                    android:id="@+id/sign_in_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ll_foreground" />
+
+                <TextView
+                    android:id="@+id/progress_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
     <ImageView
