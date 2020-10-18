@@ -32,6 +32,8 @@
     <string name="msg_setting_up_the_account">Setting up the account</string>
     <string name="calling_buddy">Calling Buddy</string>
     <string name="no_buddy_found">No buddy found</string>
+    <string name="something_went_wrong">Something went wrong!</string>
+    <string name="default_notification_channel_id">Default</string>
     <string-array name="gender_entries">
         <item>Male</item>
         <item>Female</item>

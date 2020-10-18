@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.staleinit.buddytalk.BuddyTalkApplication;
 import com.staleinit.buddytalk.model.User;
 
@@ -40,5 +39,9 @@ public class UserManager {
 
     public void saveUser(User user) {
         sharedPreferences.edit().putString(USER, new Gson().toJson(user)).apply();
+    }
+
+    public void logoutUser() {
+        sharedPreferences.edit().clear().apply();
     }
 }

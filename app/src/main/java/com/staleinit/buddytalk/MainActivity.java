@@ -6,26 +6,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.staleinit.buddytalk.manager.UserManager;
 import com.staleinit.buddytalk.model.User;
 
 public class MainActivity extends AppCompatActivity {
     private final static String USER = "USER";
-    private TextView nameTV;
-    private TextView emailTV;
-    private TextView genderTV;
+    private TextView tvName;
+    private TextView tvEmail;
+    private TextView tvGender;
     private Button startCall;
+    private ImageView ivUserProfilePic;
     private User mUser;
     private FirebaseAuth mAuth;
 
@@ -40,18 +48,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
-        nameTV = findViewById(R.id.name_textview);
-        emailTV = findViewById(R.id.email_textview);
-        genderTV = findViewById(R.id.my_gender_textview);
+        tvName = findViewById(R.id.name_textview);
+        tvEmail = findViewById(R.id.email_textview);
+        tvGender = findViewById(R.id.my_gender_textview);
         startCall = findViewById(R.id.start_call_button);
+        ivUserProfilePic = findViewById(R.id.profile_pic);
+        setUpUserInfo();
         startCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setUserAvailability(false);
-                CallActivity.dialACall(MainActivity.this);
+                CallActivity.dialACall(MainActivity.this, mUser);
             }
         });
-        setUpUserInfo();
+
 
     }
 
@@ -74,11 +84,24 @@ public class MainActivity extends AppCompatActivity {
             mUser = getIntent().getExtras().getParcelable(USER);
         }
         if (mUser != null) {
-            nameTV.setText(mUser.username);
-            emailTV.setText(mUser.email);
-            genderTV.setText(mUser.gender.toString());
+            tvName.setText(mUser.username);
+            tvEmail.setText(mUser.email);
+            tvGender.setText(mUser.gender.toString());
+            Glide.with(this).load(mUser.profilePic).into(ivUserProfilePic);
             setUserAvailability(true);
+            subscribeToATopic();
         }
+    }
+
+    private void subscribeToATopic() {
+        FirebaseMessaging.getInstance().subscribeToTopic(mUser.userId)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(MainActivity.this, "subscribed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     }
 
     @Override
@@ -101,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void logoutUser() {
         mAuth.signOut();
+        UserManager.getInstance((BuddyTalkApplication) getApplication()).logoutUser();
         //fb logout
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         boolean isFBLoggedIn = accessToken != null && !accessToken.isExpired();

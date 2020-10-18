@@ -25,6 +25,9 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -52,7 +55,9 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleInstance" />
-        <activity android:name=".CallActivity" />
+        <activity
+            android:name=".CallActivity"
+            android:launchMode="singleInstance" />
     </application>
 
 </manifest>
