@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/call_activity"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -44,11 +45,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/connection_status">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/searching_rotation_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:src="@drawable/search_animation_vector_drawable" />
+                app:srcCompat="@drawable/search_animation_vector_drawable" />
         </LinearLayout>
 
         <LinearLayout
@@ -124,7 +125,8 @@
                 android:text="Stop"
                 android:textAllCaps="false"
                 android:textColor="@color/text_color"
-                android:textSize="18.0dip" />
+                android:textSize="18.0dip"
+                tools:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/video_call_utility_buttons"
@@ -133,7 +135,8 @@
                 android:orientation="horizontal"
                 android:paddingLeft="35.0dip"
                 android:paddingRight="35.0dip"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="0.0dip"

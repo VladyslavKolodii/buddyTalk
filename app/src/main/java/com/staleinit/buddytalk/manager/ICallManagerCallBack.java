@@ -6,4 +6,8 @@ public interface ICallManagerCallBack {
     void onRemoteUserVoiceMuted(int uid, boolean muted);
 
     void onRemoteUserJoined(int uid, int elapsed);
+
+    void onJoinChannelSuccess();
+
+    void onRejoinChannelSuccess();
 }

@@ -3,8 +3,8 @@ package com.staleinit.buddytalk;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.AnimatedVectorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,13 +15,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,26 +30,31 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.staleinit.buddytalk.api.ApiClient;
 import com.staleinit.buddytalk.api.ApiInterface;
 import com.staleinit.buddytalk.manager.CallManager;
 import com.staleinit.buddytalk.manager.ICallManagerCallBack;
-import com.staleinit.buddytalk.model.DataModel;
 import com.staleinit.buddytalk.model.NotificationBody;
 import com.staleinit.buddytalk.model.NotificationModel;
 import com.staleinit.buddytalk.model.User;
 
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Locale;
+import java.util.Objects;
+
 import okhttp3.ResponseBody;
 import retrofit2.Callback;
 
-public class CallActivity extends AppCompatActivity implements ICallManagerCallBack {
+public class CallActivity extends AppCompatActivity implements ICallManagerCallBack, View.OnClickListener {
     private static final int PERMISSION_REQ_ID_RECORD_AUDIO = 22;
     private static final String TAG = CallActivity.class.getName();
     public static final String BUDDY_USER = "BUDDY_USER";
+    private static final String PREFERRED_GENDER = "PREFERRED_GENDER";
     private DatabaseReference mFirebaseDbReference;
+
     private ImageView searchAnimationView;
-    AnimatedVectorDrawable animationDrawable;
+    Animatable animationDrawable;
     private Button stopSearchButton;
     private User buddyUser;
     private User mUser;
@@ -60,6 +66,11 @@ public class CallActivity extends AppCompatActivity implements ICallManagerCallB
     private CallManager callManager;
     private View rootLayout;
     private CallMode mCallMode;
+    private View callControlLayout;
+    private Gender preferredGender;
+    private Button speaker;
+    private Button mic;
+    private Button endCall;
 
     @Override
     public void onRemoteUserLeft(int uid, int reason) {
@@ -76,16 +87,46 @@ public class CallActivity extends AppCompatActivity implements ICallManagerCallB
     @Override
     public void onRemoteUserJoined(int uid, int elapsed) {
         //this is when we need to start the timer.
+        showLongToast(String.format(Locale.US, "user %d joined %b", (uid & 0xFFFFFFFFL), elapsed));
+    }
+
+    @Override
+    public void onJoinChannelSuccess() {
+        showLongToast(String.format(Locale.US, "Channel Joined Successfuly!"));
+    }
+
+    @Override
+    public void onRejoinChannelSuccess() {
+        showLongToast(String.format(Locale.US, "Channel Re-Joined Successfuly!"));
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.speaker_button:
+                v.setSelected(!v.isSelected());
+                callManager.onSwitchSpeakerphoneClicked(v.isSelected());
+                break;
+            case R.id.mic_button:
+                v.setSelected(!v.isSelected());
+                callManager.onLocalAudioMuteClicked(v.isSelected());
+                break;
+            case R.id.end_call:
+                callManager.leaveChannel();
+                finish();
+                break;
+        }
     }
 
     public enum CallMode {
         DIAL, JOIN
     }
 
-    public static void dialACall(MainActivity mainActivity, User mUser) {
+    public static void dialACall(MainActivity mainActivity, User mUser, Gender preferredGender) {
         Intent dialIntent = new Intent(mainActivity, CallActivity.class);
         dialIntent.putExtra(USER, mUser);
         dialIntent.putExtra(CALL_MODE, CallMode.DIAL);
+        dialIntent.putExtra(PREFERRED_GENDER, preferredGender);
         mainActivity.startActivity(dialIntent);
     }
 
@@ -106,6 +147,7 @@ public class CallActivity extends AppCompatActivity implements ICallManagerCallB
         if (getIntent() != null) {
             mCallMode = (CallMode) getIntent().getExtras().get(CALL_MODE);
             mUser = getIntent().getExtras().getParcelable(USER);
+            preferredGender = (Gender) getIntent().getExtras().get(PREFERRED_GENDER);
             if (mCallMode == CallMode.JOIN) {
                 buddyUser = getIntent().getExtras().getParcelable(BUDDY_USER);
             }
@@ -117,12 +159,19 @@ public class CallActivity extends AppCompatActivity implements ICallManagerCallB
         }
         mFirebaseDbReference = FirebaseDatabase.getInstance().getReference();
         searchAnimationView = findViewById(R.id.searching_rotation_view);
-        animationDrawable = (AnimatedVectorDrawable) searchAnimationView.getDrawable();
+        animationDrawable = (Animatable) searchAnimationView.getDrawable();
         tvBuddyName = findViewById(R.id.peer_name_textview);
         ivBuddyProfilePic = findViewById(R.id.peer_profile_pic);
         tvConnectionStatus = findViewById(R.id.connection_status);
-        animationDrawable.start();
         stopSearchButton = findViewById(R.id.stop_search_button);
+        callControlLayout = findViewById(R.id.video_call_utility_buttons);
+        speaker = findViewById(R.id.speaker_button);
+        speaker.setOnClickListener(this);
+        mic = findViewById(R.id.mic_button);
+        mic.setOnClickListener(this);
+        endCall = findViewById(R.id.end_call);
+        endCall.setOnClickListener(this);
+
         stopSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,9 +179,31 @@ public class CallActivity extends AppCompatActivity implements ICallManagerCallB
                 finish();
             }
         });
+
         if (mCallMode == CallMode.DIAL) {
+            animationDrawable.start();
             searchBuddy();
+        } else {
+            joinCallWithBuddy();
         }
+    }
+
+    private void joinCallWithBuddy() {
+        tvConnectionStatus.setText(R.string.msg_in_call_with_buddy);
+        tvBuddyName.setText(buddyUser.username);
+        Glide.with(this).load(buddyUser.profilePic).into(ivBuddyProfilePic);
+        stopSearchButton.setVisibility(View.GONE);
+        callControlLayout.setVisibility(View.VISIBLE);
+
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
+            String channelName = getChannelName();
+            if (callManager != null && channelName != null) {
+                callManager.initialize(channelName);
+            } else {
+                someThingWentWrong();
+            }
+        }
+
     }
 
     private void searchBuddy() {
@@ -141,8 +212,18 @@ public class CallActivity extends AppCompatActivity implements ICallManagerCallB
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    DataSnapshot[] availableUsers = Iterables.
-                            toArray(snapshot.getChildren(), DataSnapshot.class);
+                    DataSnapshot[] availableUsers = Iterables.toArray(
+                            Iterables.filter(snapshot.getChildren(), new Predicate<DataSnapshot>() {
+                                @Override
+                                public boolean apply(@NullableDecl DataSnapshot input) {
+                                    if (input != null && input.getValue(User.class) != null) {
+                                        return Objects.requireNonNull(input.getValue(User.class))
+                                                .gender.equals(preferredGender);
+                                    }
+                                    return false;
+                                }
+                            }), DataSnapshot.class);
+
                     if (availableUsers.length > 0) {
                         int randomIndex = (int) (Math.random() % availableUsers.length);
                         buddyUser = availableUsers[randomIndex].getValue(User.class);
@@ -160,10 +241,24 @@ public class CallActivity extends AppCompatActivity implements ICallManagerCallB
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                noBuddyFound();
             }
         });
 
+    }
+
+    private Query getQueryByPreferredGender(Gender preferredGender) {
+        switch (preferredGender) {
+            /*case MALE:
+                return mFirebaseDbReference.child("users").equalTo("gender", "MALE")
+                        .equalTo("isAvailable", "true");
+            case FEMALE:
+                return mFirebaseDbReference.child("users").equalTo("gender", "FEMALE")
+                        .equalTo("isAvailable", "true");
+            case BOTH:*/
+            default:
+                return mFirebaseDbReference.child("users").orderByChild("isAvailable").equalTo(true);
+        }
     }
 
     private void noBuddyFound() {
@@ -216,6 +311,7 @@ public class CallActivity extends AppCompatActivity implements ICallManagerCallB
     @Override
     protected void onDestroy() {
         setUserAvailability(true);
+        callManager.leaveChannel();
         super.onDestroy();
     }
 
@@ -259,8 +355,12 @@ public class CallActivity extends AppCompatActivity implements ICallManagerCallB
     private String getChannelName() {
         if (mUser == null || buddyUser == null)
             return null;
-        else
+
+        if (mCallMode == CallMode.DIAL) {
             return String.format("%s:%s", mUser.userId, buddyUser.userId);
+        } else {
+            return String.format("%s:%s", buddyUser.userId, mUser.userId);
+        }
     }
 
     private void setUserAvailability(boolean isAvailable) {

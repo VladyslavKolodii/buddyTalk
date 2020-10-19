@@ -12,7 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,8 +30,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.staleinit.buddytalk.manager.UserManager;
 import com.staleinit.buddytalk.model.User;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
     private final static String USER = "USER";
+    private static final String TAG = MainActivity.class.getName();
     private TextView tvName;
     private TextView tvEmail;
     private TextView tvGender;
@@ -36,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageView ivUserProfilePic;
     private User mUser;
     private FirebaseAuth mAuth;
+    private RadioButton maleRadioButton;
+    private RadioButton femaleRadioButton;
+    private RadioButton bothRadioButton;
+    private Gender preferredGender;
 
     public static void launch(Context context, User user) {
         Intent mainPageIntent = new Intent(context, MainActivity.class);
@@ -53,12 +61,23 @@ public class MainActivity extends AppCompatActivity {
         tvGender = findViewById(R.id.my_gender_textview);
         startCall = findViewById(R.id.start_call_button);
         ivUserProfilePic = findViewById(R.id.profile_pic);
+        maleRadioButton = findViewById(R.id.male_radio_button);
+        femaleRadioButton = findViewById(R.id.female_radio_button);
+        bothRadioButton = findViewById(R.id.both_radio_button);
+        maleRadioButton.setOnCheckedChangeListener(this);
+        femaleRadioButton.setOnCheckedChangeListener(this);
+        bothRadioButton.setOnCheckedChangeListener(this);
         setUpUserInfo();
         startCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setUserAvailability(false);
-                CallActivity.dialACall(MainActivity.this, mUser);
+                if (preferredGender == null) {
+                    Toast.makeText(MainActivity.this,
+                            getString(R.string.err_please_select_preferred_gender), Toast.LENGTH_LONG).show();
+                } else {
+                    setUserAvailability(false);
+                    CallActivity.dialACall(MainActivity.this, mUser,preferredGender);
+                }
             }
         });
 
@@ -98,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(MainActivity.this, "subscribed", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "subscribed");
                     }
                 });
 
@@ -133,5 +152,32 @@ public class MainActivity extends AppCompatActivity {
         }
         startActivity(new Intent(this, LoginActivity.class));
         finish();
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()) {
+            case R.id.male_radio_button:
+                if (isChecked) {
+                    preferredGender = Gender.MALE;
+                    femaleRadioButton.setChecked(false);
+                    bothRadioButton.setChecked(false);
+                }
+                break;
+            case R.id.female_radio_button:
+                if (isChecked) {
+                    preferredGender = Gender.FEMALE;
+                    maleRadioButton.setChecked(false);
+                    bothRadioButton.setChecked(false);
+                }
+                break;
+            case R.id.both_radio_button:
+                if (isChecked) {
+                    preferredGender = Gender.BOTH;
+                    femaleRadioButton.setChecked(false);
+                    maleRadioButton.setChecked(false);
+                }
+                break;
+        }
     }
 }
