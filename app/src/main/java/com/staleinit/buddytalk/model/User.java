@@ -1,11 +1,10 @@
 package com.staleinit.buddytalk.model;
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.firebase.database.IgnoreExtraProperties;
-import com.staleinit.buddytalk.Gender;
+import com.staleinit.buddytalk.constants.Gender;
 
 @IgnoreExtraProperties
 public class User implements Parcelable {

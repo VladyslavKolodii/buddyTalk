@@ -24,8 +24,8 @@
 
 
     <!-- Agora.io Settings -->
-    <string name="agora_app_id">a1ffa8d8bc4d4066a6a6445a5a02f274</string>
-    <string name="agora_access_token">006a1ffa8d8bc4d4066a6a6445a5a02f274IADX1Q6MjTDDxzzbcwhQ4AacD1V6I4zfFHXzkq/ODefc8OAS44oAAAAAEABEZ8flrmyOXwEAAQCsbI5f</string>
+    <string name="agora_app_id">e2375bd4b58b42cfbb824d74a19c451e</string>
+    <string name="agora_access_token">AGORA_TEMP_ACCESS_TOKEN</string>
     <string name="channel_name">Buddy_Talk</string>
     <string name="channel_description">Common notification channel</string>
     <string name="google_signin_in_progress">Google signing in progress</string>

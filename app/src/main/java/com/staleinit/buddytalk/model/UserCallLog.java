@@ -4,8 +4,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class UserCallLog {
-    String userId;
-    long callDuration;
+    public String userId;
+    public long callDuration;
 
     public UserCallLog() {
 

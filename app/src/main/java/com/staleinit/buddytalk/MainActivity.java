@@ -3,6 +3,7 @@ package com.staleinit.buddytalk;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +16,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,11 +27,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.staleinit.buddytalk.constants.Gender;
 import com.staleinit.buddytalk.manager.UserManager;
 import com.staleinit.buddytalk.model.User;
 
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
     private final static String USER = "USER";
+    public final static String CANCEL_CALL = "CANCEL_CALL";
     private static final String TAG = MainActivity.class.getName();
     private TextView tvName;
     private TextView tvEmail;
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                             getString(R.string.err_please_select_preferred_gender), Toast.LENGTH_LONG).show();
                 } else {
                     setUserAvailability(false);
-                    CallActivity.dialACall(MainActivity.this, mUser,preferredGender);
+                    CallActivity.dialACall(MainActivity.this, mUser, preferredGender);
                 }
             }
         });
@@ -98,17 +100,25 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     private void setUpUserInfo() {
-        if (getIntent() != null && getIntent().getExtras() != null &&
-                getIntent().getExtras().containsKey(USER)) {
-            mUser = getIntent().getExtras().getParcelable(USER);
-        }
-        if (mUser != null) {
-            tvName.setText(mUser.username);
-            tvEmail.setText(mUser.email);
-            tvGender.setText(mUser.gender.toString());
-            Glide.with(this).load(mUser.profilePic).into(ivUserProfilePic);
-            setUserAvailability(true);
-            subscribeToATopic();
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            if (getIntent().getExtras().containsKey(CANCEL_CALL)) {
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancelAll();
+                finish();
+                return;
+            }
+            if (getIntent().getExtras().containsKey(USER)) {
+                mUser = getIntent().getExtras().getParcelable(USER);
+            }
+            if (mUser != null) {
+                tvName.setText(mUser.username);
+                tvEmail.setText(mUser.email);
+                tvGender.setText(mUser.gender.toString());
+                Glide.with(this).load(mUser.profilePic).into(ivUserProfilePic);
+                setUserAvailability(true);
+                subscribeToATopic();
+            }
         }
     }
 

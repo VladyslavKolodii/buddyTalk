@@ -1,5 +1,7 @@
 package com.staleinit.buddytalk.manager;
 
+import io.agora.rtc.IRtcEngineEventHandler;
+
 public interface ICallManagerCallBack {
     void onRemoteUserLeft(int uid, int reason);
 
@@ -10,4 +12,6 @@ public interface ICallManagerCallBack {
     void onJoinChannelSuccess();
 
     void onRejoinChannelSuccess();
+
+    void onLeaveChannel(IRtcEngineEventHandler.RtcStats stats);
 }

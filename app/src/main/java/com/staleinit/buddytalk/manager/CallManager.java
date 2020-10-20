@@ -2,24 +2,19 @@ package com.staleinit.buddytalk.manager;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.SurfaceView;
 
 import com.staleinit.buddytalk.R;
 
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
-import io.agora.rtc.video.VideoCanvas;
-import io.agora.rtc.video.VideoEncoderConfiguration;
 
 public class CallManager {
     private static final String TAG = CallManager.class.getName();
     private Context context;
     private ICallManagerCallBack iCallManagerCallBack;
-    private String channelName = "MyChannel";
-    private String uid;
+    private String channelName;
     private RtcEngine mRtcEngine; // Tutorial Step 1
-    private SurfaceView mLocalView;
     private final IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() { // Tutorial Step 1
 
         /**
@@ -72,6 +67,7 @@ public class CallManager {
         public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
             super.onJoinChannelSuccess(channel, uid, elapsed);
             Log.d(TAG, "Successfully joined the channel :" + channel);
+            iCallManagerCallBack.onJoinChannelSuccess();
         }
 
         @Override
@@ -83,7 +79,8 @@ public class CallManager {
         @Override
         public void onLeaveChannel(RtcStats stats) {
             super.onLeaveChannel(stats);
-            Log.d(TAG, "Successfully left the channel :" + stats.users);
+            //Log.d(TAG, "Successfully left the channel :" + stats.users);
+            iCallManagerCallBack.onLeaveChannel(stats);
         }
 
         @Override
@@ -103,48 +100,17 @@ public class CallManager {
     }
 
     public void initialize(String channelName) {
-        //this.channelName = channelName;
+        this.channelName = channelName;
         initializeAgoraEngine();     // Tutorial Step 1
-        setupVideoConfig();
-        setupLocalVideo();
         joinChannel();               // Tutorial Step 2
     }
-
-    private void setupVideoConfig() {
-        // In simple use cases, we only need to enable video capturing
-        // and rendering once at the initialization step.
-        // Note: audio recording and playing is enabled by default.
-        mRtcEngine.enableVideo();
-
-        // Please go to this page for detailed explanation
-        // https://docs.agora.io/en/Video/API%20Reference/java/classio_1_1agora_1_1rtc_1_1_rtc_engine.html#af5f4de754e2c1f493096641c5c5c1d8f
-        mRtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(
-                VideoEncoderConfiguration.VD_960x720,
-                VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_15,
-                VideoEncoderConfiguration.STANDARD_BITRATE,
-                VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
-    }
-
-    private void setupLocalVideo() {
-        // This is used to set a local preview.
-        // The steps setting local and remote view are very similar.
-        // But note that if the local user do not have a uid or do
-        // not care what the uid is, he can set his uid as ZERO.
-        // Our server will assign one and return the uid via the event
-        // handler callback function (onJoinChannelSuccess) after
-        // joining the channel successfully.
-        mLocalView = RtcEngine.CreateRendererView(context);
-        mLocalView.setZOrderMediaOverlay(true);
-        //mLocalContainer.addView(mLocalView);
-        mRtcEngine.setupLocalVideo(new VideoCanvas(mLocalView, VideoCanvas.RENDER_MODE_HIDDEN, 0));
-    }
-
 
     // Tutorial Step 1
     private void initializeAgoraEngine() {
         try {
             mRtcEngine = RtcEngine.create(context, context.getString(R.string.agora_app_id), mRtcEventHandler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
+            mRtcEngine.enableAudio();
         } catch (Exception e) {
             Log.e(TAG, Log.getStackTraceString(e));
 
@@ -154,17 +120,11 @@ public class CallManager {
 
     // Tutorial Step 2
     private void joinChannel() {
-        String accessToken = "006a1ffa8d8bc4d4066a6a6445a5a02f274IACMbtdgtowEixGWFG7csIIqFS+/PWpFHmtL2MpbadjKoPhtzdEAAAAAEAA1HXOdMTKNXwEAAQAxMo1f"/*context.getString(R.string.agora_access_token)*/;
-        /*if (TextUtils.equals(accessToken, "") || TextUtils.equals(accessToken, "006a1ffa8d8bc4d4066a6a6445a5a02f274IACMbtdgtowEixGWFG7csIIqFS+/PWpFHmtL2MpbadjKoPhtzdEAAAAAEAA1HXOdMTKNXwEAAQAxMo1f")) {
-            accessToken = null; // default, no token
-        }*/
-
         // Sets the channel profile of the Agora RtcEngine.
         // CHANNEL_PROFILE_COMMUNICATION(0): (Default) The Communication profile. Use this profile in one-on-one calls or group calls, where all users can talk freely.
         // CHANNEL_PROFILE_LIVE_BROADCASTING(1): The Live-Broadcast profile. Users in a live-broadcast channel have a role as either broadcaster or audience. A broadcaster can both send and receive streams; an audience can only receive streams.
-        mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
         // Allows a user to join a channel.
-        mRtcEngine.joinChannel(accessToken, channelName, null, 3); // if you do not specify the uid, we will generate the uid for you
+        mRtcEngine.joinChannel(null, channelName, "Extra Goes Here", 0); // if you do not specify the uid, we will generate the uid for you
     }
 
     // Tutorial Step 3
