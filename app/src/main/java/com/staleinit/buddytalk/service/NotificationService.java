@@ -1,4 +1,4 @@
-package com.staleinit.buddytalk;
+package com.staleinit.buddytalk.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -14,15 +14,19 @@ import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.staleinit.buddytalk.BuddyTalkApplication;
+import com.staleinit.buddytalk.R;
+import com.staleinit.buddytalk.activity.CallActivity;
+import com.staleinit.buddytalk.activity.MainActivity;
 import com.staleinit.buddytalk.constants.Gender;
 import com.staleinit.buddytalk.manager.UserManager;
 import com.staleinit.buddytalk.model.User;
 
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
-import static com.staleinit.buddytalk.CallActivity.BUDDY_USER;
-import static com.staleinit.buddytalk.CallActivity.CALL_MODE;
-import static com.staleinit.buddytalk.CallActivity.USER;
-import static com.staleinit.buddytalk.MainActivity.CANCEL_CALL;
+import static com.staleinit.buddytalk.activity.CallActivity.BUDDY_USER;
+import static com.staleinit.buddytalk.activity.CallActivity.CALL_MODE;
+import static com.staleinit.buddytalk.activity.CallActivity.USER;
+import static com.staleinit.buddytalk.activity.MainActivity.CANCEL_CALL;
 
 public class NotificationService extends FirebaseMessagingService {
     private static final String TAG = NotificationService.class.getName();

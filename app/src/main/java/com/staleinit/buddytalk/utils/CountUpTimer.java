@@ -1,4 +1,4 @@
-package com.staleinit.buddytalk;
+package com.staleinit.buddytalk.utils;
 
 import android.os.CountDownTimer;
 

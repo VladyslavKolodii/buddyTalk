@@ -1,4 +1,4 @@
-package com.staleinit.buddytalk;
+package com.staleinit.buddytalk.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,6 +35,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.staleinit.buddytalk.BuddyTalkApplication;
+import com.staleinit.buddytalk.R;
 import com.staleinit.buddytalk.constants.Gender;
 import com.staleinit.buddytalk.manager.UserManager;
 import com.staleinit.buddytalk.model.User;

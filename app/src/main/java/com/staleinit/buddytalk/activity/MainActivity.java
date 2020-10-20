@@ -1,4 +1,4 @@
-package com.staleinit.buddytalk;
+package com.staleinit.buddytalk.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +27,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.staleinit.buddytalk.BuddyTalkApplication;
+import com.staleinit.buddytalk.R;
 import com.staleinit.buddytalk.constants.Gender;
 import com.staleinit.buddytalk.manager.UserManager;
 import com.staleinit.buddytalk.model.User;
