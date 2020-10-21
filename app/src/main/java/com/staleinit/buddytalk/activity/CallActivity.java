@@ -1,8 +1,10 @@
 package com.staleinit.buddytalk.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Animatable;
@@ -30,13 +32,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.staleinit.buddytalk.BuddyTalkApplication;
 import com.staleinit.buddytalk.R;
-import com.staleinit.buddytalk.utils.CountUpTimer;
 import com.staleinit.buddytalk.api.ApiClient;
 import com.staleinit.buddytalk.api.ApiInterface;
 import com.staleinit.buddytalk.constants.Gender;
-import com.staleinit.buddytalk.manager.UserManager;
 import com.staleinit.buddytalk.model.NotificationBody;
 import com.staleinit.buddytalk.model.NotificationModel;
 import com.staleinit.buddytalk.model.User;
@@ -44,9 +43,12 @@ import com.staleinit.buddytalk.model.UserCallLog;
 
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
@@ -77,8 +79,39 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
     private CallMode mCallMode;
     private View callControlLayout;
     private Gender preferredGender;
-    CountUpTimer timer;
+    Timer callTickerTimer = new Timer();
+    Timer searchBuddyTimer = new Timer();
+    boolean retryBuddySearch = true;
+    boolean isCallInProgress = false;
     private RtcEngine mRtcEngine; // Tutorial Step 1
+    long seconds = 0;
+    private List<String> connectedBuddies = new ArrayList<>();
+    private TimerTask searchBuddyTimerTask = new TimerTask() {
+        @Override
+        public void run() {
+            if (!isCallInProgress) {
+                Log.d(TAG, "Searching Buddy from timer task");
+                searchBuddy();
+            }
+        }
+    };
+    private TimerTask callTickerTimerTask = new TimerTask() {
+        @Override
+        public void run() {
+            seconds++;
+            int hours = (int) (seconds / 3600);
+            int secondsLeft = (int) (seconds - hours * 3600);
+            final int minutes = secondsLeft / 60;
+            final int second = secondsLeft - minutes * 60;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvCallMinutes.setText(String.format(Locale.US, "%02d:%02d", minutes, second));
+                }
+            });
+        }
+    };
+
     private final IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() { // Tutorial Step 1
 
         /**
@@ -103,7 +136,21 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
             Log.d(TAG, "User offline :" + reason);
             //end the call here and update call log
             showLongToast(buddyUser.username + " has disconnected");
-            endTheCall();
+            //Just leave the channel and update the call log as Remote user was dropped
+            leaveChannel();
+            // We may need to search for next buddy hence set this flag and retry after log updated.
+            retryBuddySearch = true;
+            isCallInProgress = false;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    stopSearchButton.setVisibility(View.VISIBLE);
+                    callControlLayout.setVisibility(View.GONE);
+                    tvCallMinutes.setVisibility(View.GONE);
+                    stopCallDurationTimer();
+                    startSearchBuddyTimer();
+                }
+            });
         }
 
         /**
@@ -128,8 +175,10 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
         public void onUserJoined(int uid, int elapsed) {
             super.onUserJoined(uid, elapsed);
             Log.d(TAG, "User joined the channel :" + uid);
+            retryBuddySearch = false;
             //this is when we need to start the timer.
             //showLongToast(buddyUser.username + " has joined");
+            stopSearchBuddyTimer();
             if (mCallMode == CallMode.DIAL) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -172,41 +221,14 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
         public void onLeaveChannel(RtcStats stats) {
             super.onLeaveChannel(stats);
             //Log.d(TAG, "Successfully left the channel :" + stats.users);
+            if (rejoinChannel) {
+                rejoinChannel = false;
+                //join the same channel
+                joinChannel();
+                return;
+            }
             if (mCallMode == CallMode.DIAL) {
-                totalCallDuration = stats.totalDuration;
-                final UserCallLog callLog = new UserCallLog();
-                final User loggedInUser = UserManager.getInstance((BuddyTalkApplication) getApplication())
-                        .getLoggedInUser();
-                if (loggedInUser != null) {
-                    callLog.userId = loggedInUser.userId;
-                    Query query = mFirebaseDbReference
-                            .child("CallLog")
-                            .orderByChild("userId")
-                            .equalTo(loggedInUser.userId);
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                DataSnapshot[] callLogs = Iterables.toArray(
-                                        snapshot.getChildren(), DataSnapshot.class);
-                                if (callLogs.length > 0) {
-                                    UserCallLog existingCallLog = callLogs[0].getValue(UserCallLog.class);
-                                    if (existingCallLog != null) {
-                                        totalCallDuration += existingCallLog.callDuration;
-                                    }
-                                }
-                            }
-                            callLog.callDuration = totalCallDuration;
-                            mFirebaseDbReference.child("CallLog").child(loggedInUser.userId).setValue(callLog);
-                            finish();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            finish();
-                        }
-                    });
-                }
+                updateCallLog(stats);
             } else {
                 finish();
             }
@@ -216,26 +238,92 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
         public void onError(int err) {
             super.onError(err);
             Log.d(TAG, "Error:" + err);
+            if (err == 17) {//Handle already joined called, by setting a rejoin flag true and leave channel
+                rejoinChannel = true;
+                leaveChannel();
+            }
         }
     };
+    private boolean rejoinChannel = false;
+
+
+    private void updateCallLog(IRtcEngineEventHandler.RtcStats stats) {
+        totalCallDuration = stats.totalDuration;
+        final UserCallLog callLog = new UserCallLog();
+        if (mUser != null && totalCallDuration > 0) {
+            callLog.userId = mUser.userId;
+            Query query = mFirebaseDbReference
+                    .child("CallLog")
+                    .orderByChild("userId")
+                    .equalTo(mUser.userId);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        DataSnapshot[] callLogs = Iterables.toArray(
+                                snapshot.getChildren(), DataSnapshot.class);
+                        if (callLogs.length > 0) {
+                            UserCallLog existingCallLog = callLogs[0].getValue(UserCallLog.class);
+                            if (existingCallLog != null) {
+                                totalCallDuration += existingCallLog.callDuration;
+                            }
+                        }
+                    }
+                    callLog.callDuration = totalCallDuration;
+                    mFirebaseDbReference.child("CallLog").child(mUser.userId).setValue(callLog);
+                    if (!retryBuddySearch) {
+                        finish();
+                    } else {
+                        Log.d(TAG, "Searching Buddy from update call log");
+                        searchBuddy();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    if (!retryBuddySearch) {
+                        finish();
+                    } else {
+                        Log.d(TAG, "Searching Buddy from onCancelled");
+                        searchBuddy();
+                    }
+                }
+            });
+        }
+    }
 
 
     private void endTheCall() {
+        //User Chose to end , hence we will not retry and search will end here
+        retryBuddySearch = false;
         leaveChannel();
-        if (timer != null) {
-            timer.cancel();
-        }
+        stopCallDurationTimer();
+        stopSearchBuddyTimer();
         callControlLayout.setVisibility(View.GONE);
         stopSearchButton.setVisibility(View.GONE);
     }
 
+    private void stopCallDurationTimer() {
+        if (callTickerTimer != null) {
+            callTickerTimer.cancel();
+        }
+    }
+
+    private void stopSearchBuddyTimer() {
+        if (searchBuddyTimer != null) {
+            searchBuddyTimer.cancel();
+        }
+    }
+
 
     private void showCallDurationTicker() {
+        isCallInProgress = true;
         tvConnectionStatus.setText(R.string.msg_in_call_with_buddy);
         stopSearchButton.setVisibility(View.GONE);
         callControlLayout.setVisibility(View.VISIBLE);
         tvCallMinutes.setVisibility(View.VISIBLE);
         startCounter();
+        stopSearchBuddyTimer();
     }
 
 
@@ -251,7 +339,7 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
                 onLocalAudioMuteClicked(v.isSelected());
                 break;
             case R.id.end_call:
-                endTheCall();
+                showLeaveChannelDialog();
                 break;
         }
     }
@@ -304,16 +392,51 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
         stopSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                animationDrawable.stop();
-                finish();
+                showLeaveChannelDialog();
             }
         });
 
         if (mCallMode == CallMode.DIAL) {
             animationDrawable.start();
+            Log.d(TAG, "Searching Buddy from OnCretae");
             searchBuddy();
+            startSearchBuddyTimer();
         } else {
             joinCallWithBuddy();
+        }
+    }
+
+    private void startSearchBuddyTimer() {
+        try {
+            searchBuddyTimer = new Timer();
+            searchBuddyTimer.scheduleAtFixedRate(searchBuddyTimerTask, 60 * 1000, 60 * 1000);
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void showLeaveChannelDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(CallActivity.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.msg_do_you_want_to_quit)
+                .setPositiveButton(R.string.label_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (isCallInProgress) {
+                            endTheCall();
+                        } else {
+                            finish();
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.label_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        if (!this.isFinishing()) {
+            dialog.create().show();
         }
     }
 
@@ -322,6 +445,7 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
         tvBuddyName.setText(buddyUser.username);
         Glide.with(this).load(buddyUser.profilePic).into(ivBuddyProfilePic);
         stopSearchButton.setVisibility(View.GONE);
+        animationDrawable.start();
 
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
             joinAgoraChannelCall();
@@ -344,18 +468,24 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void startCounter() {
-        timer = new CountUpTimer(30000) {
-            public void onTick(int second) {
-                int hours = second / 3600;
-                int minutes = (second - hours * 3600) / 60;
-                int seconds = (second - hours * 3600) - minutes * 60;
-                tvCallMinutes.setText(String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds));
-            }
-        };
-        timer.start();
+        try {
+            callTickerTimer = new Timer();
+            callTickerTimer.scheduleAtFixedRate(callTickerTimerTask, 0, 1000);
+        } catch (Exception e) {
+
+        }
     }
 
     private void searchBuddy() {
+        animationDrawable.start();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvConnectionStatus.setText(R.string.msg_searching_buddy);
+                ivBuddyProfilePic.setImageDrawable(null);
+                tvBuddyName.setText(R.string.finding_buddy);
+            }
+        });
         Query query = mFirebaseDbReference.child("users").orderByChild("isAvailable").equalTo(true);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -365,12 +495,18 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
                             Iterables.filter(snapshot.getChildren(), new Predicate<DataSnapshot>() {
                                 @Override
                                 public boolean apply(@NullableDecl DataSnapshot input) {
-                                    if (input != null && input.getValue(User.class) != null) {
-                                        if (preferredGender == Gender.BOTH) {
-                                            return true;
-                                        } else {
-                                            return Objects.requireNonNull(input.getValue(User.class))
-                                                    .gender.equals(preferredGender);
+                                    if (input != null) {
+                                        User currentBuddy = input.getValue(User.class);
+                                        if (currentBuddy != null && (!currentBuddy.userId.equals(mUser.userId) &&
+                                                !connectedBuddies.contains(currentBuddy.userId))) {
+                                            //Add the current selected buddy to the list so in the
+                                            // next search we wont end up in selecting the same buddy
+                                            connectedBuddies.add(currentBuddy.userId);
+                                            if (preferredGender == Gender.BOTH) {
+                                                return true;
+                                            } else {
+                                                return currentBuddy.gender.equals(preferredGender);
+                                            }
                                         }
                                     }
                                     return false;
@@ -401,20 +537,30 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void noBuddyFound() {
+        buddyUser = null;
+        ivBuddyProfilePic.setImageDrawable(null);
         tvBuddyName.setText(R.string.no_buddy_found);
-        animationDrawable.stop();
+        isCallInProgress = false;
+        if (!retryBuddySearch) {
+            Log.d(TAG, "Searching Buddy from noBuddyFound");
+            animationDrawable.stop();
+            stopSearchBuddyTimer();
+        }
     }
 
     private void connectCallWithBuddy(User buddyUser) {
         setUserAvailability(false);
         tvConnectionStatus.setText(R.string.calling_buddy);
         tvBuddyName.setText(buddyUser.username);
-        Glide.with(this).load(buddyUser.profilePic).into(ivBuddyProfilePic);
+        if (!this.isFinishing()) {
+            Glide.with(this).load(buddyUser.profilePic).into(ivBuddyProfilePic);
+        }
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
             channelName = getChannelName();
             if (channelName != null) {
-                sendNotificationToBuddy(buddyUser);
                 initialize();
+                sendNotificationToBuddy(buddyUser);
+
             } else {
                 someThingWentWrong();
             }
@@ -451,8 +597,17 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         setUserAvailability(true);
+        stopSearchBuddyTimer();
         mRtcEngine = null;
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        leaveChannel();
+        stopSearchBuddyTimer();
+        finish();
     }
 
     public boolean checkSelfPermission(String permission, int requestCode) {
@@ -506,7 +661,10 @@ public class CallActivity extends AppCompatActivity implements View.OnClickListe
         // CHANNEL_PROFILE_COMMUNICATION(0): (Default) The Communication profile. Use this profile in one-on-one calls or group calls, where all users can talk freely.
         // CHANNEL_PROFILE_LIVE_BROADCASTING(1): The Live-Broadcast profile. Users in a live-broadcast channel have a role as either broadcaster or audience. A broadcaster can both send and receive streams; an audience can only receive streams.
         // Allows a user to join a channel.
-        mRtcEngine.joinChannel(null, channelName, "Extra Goes Here", 0); // if you do not specify the uid, we will generate the uid for you
+        Log.d(TAG, "Joining The Channel");
+        if (mRtcEngine != null) {
+            mRtcEngine.joinChannel(null, channelName, "Extra Goes Here", 0); // if you do not specify the uid, we will generate the uid for you
+        }
     }
 
     private String getChannelName() {

@@ -24,18 +24,23 @@
 
 
     <!-- Agora.io Settings -->
-    <string name="agora_app_id">e2375bd4b58b42cfbb824d74a19c451e</string>
-    <string name="agora_access_token">AGORA_TEMP_ACCESS_TOKEN</string>
+    <string name="agora_app_id">abddaa91879a4623bc78875fe5864d79</string>
+    <string name="agora_access_token">NO_ACCES_TOKEN</string>
     <string name="channel_name">Buddy_Talk</string>
     <string name="channel_description">Common notification channel</string>
     <string name="google_signin_in_progress">Google signing in progress</string>
     <string name="msg_setting_up_the_account">Setting up the account</string>
     <string name="calling_buddy">Calling Buddy</string>
     <string name="no_buddy_found">No buddy found</string>
+    <string name="finding_buddy">None</string>
     <string name="something_went_wrong">Something went wrong!</string>
     <string name="default_notification_channel_id">Default</string>
     <string name="msg_in_call_with_buddy">In call with</string>
     <string name="err_please_select_preferred_gender">Please select atleast one gender</string>
+    <string name="msg_do_you_want_to_quit">Do you want to really quit calling now?</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="msg_searching_buddy">Searching Buddies...</string>
     <string-array name="gender_entries">
         <item>Male</item>
         <item>Female</item>

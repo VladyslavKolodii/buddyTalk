@@ -86,6 +86,7 @@ public class NotificationService extends FirebaseMessagingService {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_CALL)
                 .setCustomBigContentView(notificationLayout)
+                .setCustomHeadsUpContentView(notificationLayout)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setAutoCancel(true);

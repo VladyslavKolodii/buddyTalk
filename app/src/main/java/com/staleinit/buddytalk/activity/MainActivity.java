@@ -132,7 +132,16 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                         Log.d(TAG, "subscribed");
                     }
                 });
+    }
 
+    private void unSubscribeToATopic() {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(mUser.userId)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d(TAG, "subscribed");
+                    }
+                });
     }
 
     @Override
@@ -146,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
+                unSubscribeToATopic();
                 logoutUser();
                 return true;
             default:
@@ -155,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     private void logoutUser() {
         mAuth.signOut();
+        setUserAvailability(false);
         UserManager.getInstance((BuddyTalkApplication) getApplication()).logoutUser();
         //fb logout
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -162,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         if (isFBLoggedIn) {
             LoginManager.getInstance().logOut();
         }
+
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }

@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10.0dip"
-            android:text="Searching Buddies..."
+            android:text="@string/msg_searching_buddy"
             android:textColor="#ffffffff"
             android:textSize="16.0dip"
             app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="5.0dip"
-                android:text="Mummy"
+                android:text="@string/finding_buddy"
                 android:textColor="#ffffffff"
                 android:textSize="16.0dip" />
         </LinearLayout>
